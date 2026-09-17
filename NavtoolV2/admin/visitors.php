@@ -1,0 +1,10 @@
+<?php
+require_once __DIR__ . '/../includes/common.php'; admin_required();
+$live=db()->query("SELECT * FROM live_visitors WHERE last_seen>=NOW()-INTERVAL 2 MINUTE ORDER BY last_seen DESC")->fetchAll();
+$recent=db()->query("SELECT visited_at,path,device,browser,referrer FROM page_views ORDER BY id DESC LIMIT 100")->fetchAll();
+?><!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="30"><title>Besucher · NAVTOOL Admin</title><link rel="stylesheet" href="/assets/admin.css"></head><body class="admin-bg">
+<header class="admin-top"><a class="admin-brand" href="/admin/"><span>NT</span>NAVTOOL ADMIN</a><a class="ghost" href="/admin/logout.php">Abmelden</a></header>
+<div class="admin-layout"><aside><a href="/admin/">Dashboard</a><a href="/admin/settings.php">Website & Module</a><a href="/admin/ads.php">Werbung</a><a class="active" href="/admin/visitors.php">Besucher</a></aside>
+<main><div class="eyebrow">04 · VISITORS</div><h1>Besucher</h1><section class="panel"><h2>Jetzt online · <?=count($live)?></h2><div class="table-wrap"><table><thead><tr><th>Seite</th><th>Gerät</th><th>Browser</th><th>Quelle</th><th>Zuletzt</th></tr></thead><tbody><?php foreach($live as $v):?><tr><td><?=htmlspecialchars($v['path'])?></td><td><?=htmlspecialchars($v['device'])?></td><td><?=htmlspecialchars($v['browser'])?></td><td><?=htmlspecialchars($v['referrer']??'Direkt')?></td><td><?=htmlspecialchars($v['last_seen'])?></td></tr><?php endforeach;?></tbody></table></div></section>
+<section class="panel"><h2>Letzte Besuche</h2><div class="table-wrap"><table><thead><tr><th>Zeit</th><th>Seite</th><th>Gerät</th><th>Browser</th><th>Quelle</th></tr></thead><tbody><?php foreach($recent as $v):?><tr><td><?=htmlspecialchars($v['visited_at'])?></td><td><?=htmlspecialchars($v['path'])?></td><td><?=htmlspecialchars($v['device'])?></td><td><?=htmlspecialchars($v['browser'])?></td><td><?=htmlspecialchars($v['referrer']??'Direkt')?></td></tr><?php endforeach;?></tbody></table></div></section>
+</main></div></body></html>
